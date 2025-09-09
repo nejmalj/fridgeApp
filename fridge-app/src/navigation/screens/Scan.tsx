@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState } from "react";
+import {useNavigation} from "@react-navigation/native";
 
 const colors = {
     primary: "#38e07b",
@@ -14,6 +15,7 @@ export function Scan() {
     const [facing, setFacing] = useState<CameraType>('back');
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
+    const navigation = useNavigation();
 
     if (!permission) {
         return <View />;
@@ -44,9 +46,8 @@ export function Scan() {
 
             if (result.status === 1) {
                 const productName = result.product.product_name || "Nom inconnu";
-                Alert.alert("Produit trouvé", productName, [
-                    { text: "OK", onPress: () => setScanned(false) },
-                ]);
+
+                navigation.navigate('Fridge', { scannedProduct: productName });
             } else {
                 Alert.alert("Produit non trouvé", "Cet aliment n'existe pas dans la base.", [
                     { text: "OK", onPress: () => setScanned(false) },

@@ -7,8 +7,9 @@ import {
     StyleSheet,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import {useNavigation} from "@react-navigation/native";
+import {useNavigation, useRoute} from "@react-navigation/native";
 import { Navigation } from "../index";
+import React from "react";
 
 const colors = {
     primary: "#38e07b",
@@ -18,17 +19,17 @@ const colors = {
     white: "#ffffff",
 };
 
-const fridgeItems = [
-    "Lait",
-    "Oeufs",
-    "Fromage",
-    "Tomates",
-    "Salade",
-    "Poulet",
-];
-
 export function Fridge() {
     const navigation = useNavigation();
+    const route = useRoute();
+    const [fridgeItems, setFridgeItems] = React.useState([]);
+
+    // Si on revient de Scan avec un produit
+    React.useEffect(() => {
+        if (route.params?.scannedProduct) {
+            setFridgeItems(prev => [route.params.scannedProduct, ...prev]);
+        }
+    }, [route.params?.scannedProduct]);
 
     return (
         <SafeAreaView style={styles.container}>
