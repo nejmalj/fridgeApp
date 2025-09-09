@@ -29,19 +29,46 @@ export function Fridge() {
     React.useEffect(() => {
         if (route.params?.scannedProduct) {
             const newProduct = route.params.scannedProduct as Product;
-            // Check if the product is already in the list to prevent duplicates
-            const isAlreadyAdded = fridgeItems.some(item => item.name === newProduct.name && item.brand === newProduct.brand);
 
-            if (!isAlreadyAdded) {
-                setFridgeItems(prev => [newProduct, ...prev]);
-            }
+            setFridgeItems(prev => {
+                const existingProductIndex = prev.findIndex(
+                    item => item.name === newProduct.name && item.brand === newProduct.brand
+                );
+
+                if (existingProductIndex > -1) {
+                    // Product already exists, increment quantity
+                    const updatedItems = [...prev];
+                    updatedItems[existingProductIndex] = {
+                        ...updatedItems[existingProductIndex],
+                        quantity: updatedItems[existingProductIndex].quantity + 1,
+                    };
+                    return updatedItems;
+                } else {
+                    // New product, add to list with quantity 1
+                    return [{ ...newProduct, quantity: 1 }, ...prev];
+                }
+            });
             // Clear the scannedProduct param after processing
             navigation.setParams({ scannedProduct: undefined });
         }
-    }, [route.params?.scannedProduct, navigation, fridgeItems]);
+    }, [route.params?.scannedProduct, navigation]);
 
-    const removeItem = (index: number) => {
-        setFridgeItems(prev => prev.filter((_, i) => i !== index));
+    const updateProductQuantity = (index: number, change: number) => {
+        setFridgeItems(prev => {
+            const updatedItems = [...prev];
+            const product = updatedItems[index];
+
+            if (product) {
+                const newQuantity = product.quantity + change;
+                if (newQuantity > 0) {
+                    updatedItems[index] = { ...product, quantity: newQuantity };
+                } else {
+                    // Remove item if quantity is 0 or less
+                    updatedItems.splice(index, 1);
+                }
+            }
+            return updatedItems;
+        });
     };
 
     return (
@@ -69,12 +96,21 @@ export function Fridge() {
                             <Text style={styles.itemName}>{item.name}</Text>
                             {item.brand && <Text style={styles.itemBrand}>{item.brand}</Text>}
                         </View>
-                        <TouchableOpacity
-                            style={styles.removeButton}
-                            onPress={() => removeItem(index)}
-                        >
-                            <MaterialIcons name="remove" size={20} color={colors.white} />
-                        </TouchableOpacity>
+                        <View style={styles.quantityContainer}>
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={() => updateProductQuantity(index, -1)}
+                            >
+                                <MaterialIcons name="remove" size={20} color={colors.white} />
+                            </TouchableOpacity>
+                            <Text style={styles.quantityText}>{item.quantity}</Text>
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={() => updateProductQuantity(index, 1)}
+                            >
+                                <MaterialIcons name="add" size={20} color={colors.white} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )}
             />
@@ -146,9 +182,21 @@ const styles = StyleSheet.create({
         color: colors.white,
         opacity: 0.7,
     },
-    removeButton: {
+    quantityContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginLeft: 12,
+    },
+    quantityButton: {
         padding: 4,
         borderRadius: 8,
         backgroundColor: colors.mediumlightgreen,
+        marginHorizontal: 4,
+    },
+    quantityText: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: colors.white,
+        marginHorizontal: 8,
     },
 });
