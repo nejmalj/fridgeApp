@@ -1,6 +1,5 @@
 import { Button, Text } from '@react-navigation/elements';
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {Animated, SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {MaterialIcons} from "@expo/vector-icons";
 import { Navigation } from "../index";
@@ -21,13 +20,6 @@ export function Home() {
     return (
         <SafeAreaView style={[styles.container]}>
             <View style={styles.innerContainer}>
-                <View style={styles.header}>
-                    <View style={{ width: 32 }} />
-                    <Text style={[styles.headerTitle]}>
-                        Le Copain du Frigo
-                    </Text>
-                </View>
-
                 <ScrollView
                     contentContainerStyle={styles.main}
                 >
@@ -66,17 +58,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         justifyContent: "space-between",
-    },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 16,
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: colors.neutral50,
     },
     iconButton: {
         height: 32,

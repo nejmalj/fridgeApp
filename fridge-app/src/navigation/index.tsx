@@ -61,6 +61,13 @@ const RootStack = createNativeStackNavigator({
         headerShown: false,
       },
     },
+    Scan: {
+      screen: Scan,
+      options: {
+        title: 'Scan',
+        headerShown: false,
+      },
+    },
     Profile: {
       screen: Profile,
       linking: {
