@@ -28,9 +28,17 @@ export function Fridge() {
     // Si on revient de Scan avec un produit
     React.useEffect(() => {
         if (route.params?.scannedProduct) {
-            setFridgeItems(prev => [route.params.scannedProduct as Product, ...prev]);
+            const newProduct = route.params.scannedProduct as Product;
+            // Check if the product is already in the list to prevent duplicates
+            const isAlreadyAdded = fridgeItems.some(item => item.name === newProduct.name && item.brand === newProduct.brand);
+
+            if (!isAlreadyAdded) {
+                setFridgeItems(prev => [newProduct, ...prev]);
+            }
+            // Clear the scannedProduct param after processing
+            navigation.setParams({ scannedProduct: undefined });
         }
-    }, [route.params?.scannedProduct]);
+    }, [route.params?.scannedProduct, navigation, fridgeItems]);
 
     const removeItem = (index: number) => {
         setFridgeItems(prev => prev.filter((_, i) => i !== index));
