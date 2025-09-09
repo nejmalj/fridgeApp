@@ -24,11 +24,20 @@ export function Fridge() {
     const navigation = useNavigation();
     const route = useRoute();
     const [fridgeItems, setFridgeItems] = React.useState<Product[]>([]);
+    const processedScannedProductRef = React.useRef<Product | null>(null);
 
     // Si on revient de Scan avec un produit
     React.useEffect(() => {
         if (route.params?.scannedProduct) {
             const newProduct = route.params.scannedProduct as Product;
+
+            // Check if this product has already been processed
+            if (processedScannedProductRef.current &&
+                processedScannedProductRef.current.name === newProduct.name &&
+                processedScannedProductRef.current.brand === newProduct.brand) {
+                // Already processed, do nothing
+                return;
+            }
 
             setFridgeItems(prev => {
                 const existingProductIndex = prev.findIndex(
@@ -48,6 +57,10 @@ export function Fridge() {
                     return [{ ...newProduct, quantity: 1 }, ...prev];
                 }
             });
+
+            // Mark this product as processed
+            processedScannedProductRef.current = newProduct;
+
             // Clear the scannedProduct param after processing
             navigation.setParams({ scannedProduct: undefined });
         }

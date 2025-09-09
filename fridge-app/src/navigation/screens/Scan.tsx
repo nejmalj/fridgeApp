@@ -44,8 +44,7 @@ export function Scan() {
     }
 
     async function handleBarCodeScanned({ data }: { data: string }) {
-        if (scanned) return;
-        setScanned(true);
+        setScanned(true); // Set scanned to true immediately to disable further scans
 
         try {
             const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${data}.json`);
@@ -76,7 +75,7 @@ export function Scan() {
             <CameraView
                 style={styles.camera}
                 facing={facing}
-                onBarcodeScanned={handleBarCodeScanned}
+                onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
             />
 
             <View style={styles.buttonContainer}>
