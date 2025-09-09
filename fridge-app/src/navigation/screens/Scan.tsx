@@ -1,5 +1,5 @@
 import { Text } from '@react-navigation/elements';
-import { SafeAreaView, StyleSheet, TouchableOpacity, View, Button } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState } from "react";
@@ -13,6 +13,7 @@ const colors = {
 export function Scan() {
     const [facing, setFacing] = useState<CameraType>('back');
     const [permission, requestPermission] = useCameraPermissions();
+    const [scanned, setScanned] = useState(false);
 
     if (!permission) {
         return <View />;
@@ -20,9 +21,11 @@ export function Scan() {
 
     if (!permission.granted) {
         return (
-            <View style={styles.scannerBox}>
-                <Text>We need your permission to show the camera</Text>
-                <Button onPress={requestPermission} title="Autoriser" />
+            <View style={styles.centered}>
+                <Text>Votre permission est nécessaire pour utiliser la caméra</Text>
+                <TouchableOpacity onPress={requestPermission} style={styles.retryButton}>
+                    <Text style={{ color: colors.black }}>Autoriser</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -31,9 +34,39 @@ export function Scan() {
         setFacing(current => (current === 'back' ? 'front' : 'back'));
     }
 
+    async function handleBarCodeScanned({ data }: { data: string }) {
+        if (scanned) return;
+        setScanned(true);
+
+        try {
+            const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${data}.json`);
+            const result = await response.json();
+
+            if (result.status === 1) {
+                const productName = result.product.product_name || "Nom inconnu";
+                Alert.alert("Produit trouvé", productName, [
+                    { text: "OK", onPress: () => setScanned(false) },
+                ]);
+            } else {
+                Alert.alert("Produit non trouvé", "Cet aliment n'existe pas dans la base.", [
+                    { text: "OK", onPress: () => setScanned(false) },
+                ]);
+            }
+        } catch (error) {
+            Alert.alert("Erreur", "Impossible de récupérer le produit.", [
+                { text: "OK", onPress: () => setScanned(false) },
+            ]);
+        }
+    }
+
     return (
         <View style={styles.container}>
-            <CameraView style={styles.camera} facing={facing} />
+            <CameraView
+                style={styles.camera}
+                facing={facing}
+                onBarcodeScanned={handleBarCodeScanned}
+            />
+
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
                 </TouchableOpacity>
@@ -143,4 +176,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
     },
+    retryButton: {
+        marginTop: 16,
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 24,
+        backgroundColor: colors.primary,
+        alignItems: "center",
+    },
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });
