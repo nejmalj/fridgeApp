@@ -37,7 +37,7 @@ export function Home() {
 
                     <TouchableOpacity
                         style={[styles.mainButton]}
-                        onPress={() => navigation.navigate('Fridge')}
+                        onPress={() => navigation.navigate('Fridge' as never)}
                     >
                         <Text style={[styles.mainButtonText]}>
                             Mon frigo

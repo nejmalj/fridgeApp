@@ -7,8 +7,7 @@ import {
     StyleSheet,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import {useNavigation, useRoute} from "@react-navigation/native";
-import { Navigation } from "../index";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 
 const colors = {
@@ -31,6 +30,10 @@ export function Fridge() {
         }
     }, [route.params?.scannedProduct]);
 
+    const removeItem = (index: number) => {
+        setFridgeItems(prev => prev.filter((_, i) => i !== index));
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -47,6 +50,12 @@ export function Fridge() {
                 {fridgeItems.map((item, index) => (
                     <View key={index} style={styles.itemCard}>
                         <Text style={styles.itemText}>{item}</Text>
+                        <TouchableOpacity
+                            style={styles.removeButton}
+                            onPress={() => removeItem(index)}
+                        >
+                            <MaterialIcons name="remove" size={20} color={colors.white} />
+                        </TouchableOpacity>
                     </View>
                 ))}
             </ScrollView>
@@ -65,7 +74,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         padding: 16,
         paddingBottom: 12,
-        backgroundColor: "rgba(18,33,24,0.8)", // simulate backdrop blur with transparency
+        backgroundColor: "rgba(18,33,24,0.8)",
     },
     headerTitle: {
         fontSize: 24,
@@ -94,11 +103,19 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 4,
-        elevation: 2, // Android shadow
+        elevation: 2,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     itemText: {
         fontSize: 18,
         fontWeight: "600",
         color: colors.white,
+    },
+    removeButton: {
+        padding: 4,
+        borderRadius: 8,
+        backgroundColor: colors.mediumlightgreen,
     },
 });
