@@ -2,7 +2,7 @@ import { Text } from '@react-navigation/elements';
 import {
     SafeAreaView,
     View,
-    ScrollView,
+    FlatList,
     TouchableOpacity,
     StyleSheet,
 } from "react-native";
@@ -37,7 +37,7 @@ export function Fridge() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>Mon frigo</Text>
+                <Text style={styles.headerTitle}>Liste</Text>
                 <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => navigation.navigate('Scan')}
@@ -46,9 +46,12 @@ export function Fridge() {
                 </TouchableOpacity>
             </View>
 
-            <ScrollView contentContainerStyle={styles.main}>
-                {fridgeItems.map((item, index) => (
-                    <View key={index} style={styles.itemCard}>
+            <FlatList
+                data={fridgeItems}
+                contentContainerStyle={styles.main}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                    <View style={styles.itemCard}>
                         <Text style={styles.itemText}>{item}</Text>
                         <TouchableOpacity
                             style={styles.removeButton}
@@ -57,8 +60,8 @@ export function Fridge() {
                             <MaterialIcons name="remove" size={20} color={colors.white} />
                         </TouchableOpacity>
                     </View>
-                ))}
-            </ScrollView>
+                )}
+            />
         </SafeAreaView>
     );
 }
