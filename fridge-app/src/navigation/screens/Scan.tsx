@@ -2,8 +2,8 @@ import { Text } from '@react-navigation/elements';
 import { StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState } from "react";
-import {useNavigation} from "@react-navigation/native";
+import {useCallback, useState} from "react";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 const colors = {
     primary: "#38e07b",
@@ -16,6 +16,12 @@ export function Scan() {
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
     const navigation = useNavigation();
+
+    useFocusEffect(
+        useCallback(() => {
+            setScanned(false);
+        }, [])
+    );
 
     if (!permission) {
         return <View />;
