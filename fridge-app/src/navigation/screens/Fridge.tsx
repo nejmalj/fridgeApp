@@ -5,10 +5,12 @@ import {
     FlatList,
     TouchableOpacity,
     StyleSheet,
+    Image,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
+import { Product } from "../types";
 
 const colors = {
     primary: "#38e07b",
@@ -21,12 +23,12 @@ const colors = {
 export function Fridge() {
     const navigation = useNavigation();
     const route = useRoute();
-    const [fridgeItems, setFridgeItems] = React.useState([]);
+    const [fridgeItems, setFridgeItems] = React.useState<Product[]>([]);
 
     // Si on revient de Scan avec un produit
     React.useEffect(() => {
         if (route.params?.scannedProduct) {
-            setFridgeItems(prev => [route.params.scannedProduct, ...prev]);
+            setFridgeItems(prev => [route.params.scannedProduct as Product, ...prev]);
         }
     }, [route.params?.scannedProduct]);
 
@@ -52,7 +54,13 @@ export function Fridge() {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
                     <View style={styles.itemCard}>
-                        <Text style={styles.itemText}>{item}</Text>
+                        {item.image && (
+                            <Image source={{ uri: item.image }} style={styles.productImage} />
+                        )}
+                        <View style={styles.productInfo}>
+                            <Text style={styles.itemName}>{item.name}</Text>
+                            {item.brand && <Text style={styles.itemBrand}>{item.brand}</Text>}
+                        </View>
                         <TouchableOpacity
                             style={styles.removeButton}
                             onPress={() => removeItem(index)}
@@ -111,10 +119,24 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
     },
-    itemText: {
+    productImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 8,
+        marginRight: 12,
+    },
+    productInfo: {
+        flex: 1,
+    },
+    itemName: {
         fontSize: 18,
         fontWeight: "600",
         color: colors.white,
+    },
+    itemBrand: {
+        fontSize: 14,
+        color: colors.white,
+        opacity: 0.7,
     },
     removeButton: {
         padding: 4,

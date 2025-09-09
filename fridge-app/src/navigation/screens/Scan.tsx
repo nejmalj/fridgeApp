@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import {useCallback, useState} from "react";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import { Product } from "../types";
 
 const colors = {
     primary: "#38e07b",
@@ -51,9 +52,13 @@ export function Scan() {
             const result = await response.json();
 
             if (result.status === 1) {
-                const productName = result.product.product_name || "Nom inconnu";
+                const product: Product = {
+                    name: result.product.product_name || "Nom inconnu",
+                    brand: result.product.brands || "Marque inconnue",
+                    image: result.product.image_front_url || null,
+                };
 
-                navigation.navigate('Fridge', { scannedProduct: productName });
+                navigation.navigate('Fridge', { scannedProduct: product });
             } else {
                 Alert.alert("Produit non trouvé", "Cet aliment n'existe pas dans la base.", [
                     { text: "OK", onPress: () => setScanned(false) },
