@@ -12,11 +12,10 @@ import { Navigation } from "../index";
 
 const colors = {
     primary: "#38e07b",
-    neutral900: "#122118",
-    neutral800: "#1A2C21",
-    neutral700: "#264532",
+    darkgreen: "#122118",
+    mediumgreen: "#1A2C21",
+    mediumlightgreen: "#264532",
     white: "#ffffff",
-    gray400: "#A0A0A0",
 };
 
 const fridgeItems = [
@@ -33,7 +32,6 @@ export function Fridge() {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* HEADER */}
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Mon frigo</Text>
                 <TouchableOpacity
@@ -58,7 +56,7 @@ export function Fridge() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.neutral900,
+        backgroundColor: colors.darkgreen,
     },
     header: {
         flexDirection: "row",
@@ -87,7 +85,7 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     itemCard: {
-        backgroundColor: colors.neutral800,
+        backgroundColor: colors.mediumgreen,
         padding: 16,
         borderRadius: 16,
         marginBottom: 12,

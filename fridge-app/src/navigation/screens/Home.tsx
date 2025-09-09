@@ -6,12 +6,12 @@ import { Navigation } from "../index";
 import ScrollView = Animated.ScrollView;
 
 const colors = {
-    primary500: "#38e07b",
-    neutral900: "#122118",
-    neutral800: "#1b3124",
-    neutral700: "#264532",
-    neutral400: "#96c5a9",
-    neutral50: "#ffffff",
+    primary: "#38e07b",
+    darkgreen: "#122118",
+    mediumgreen: "#1b3124",
+    mediumlightgreen: "#264532",
+    lightgreen: "#96c5a9",
+    white: "#ffffff",
 };
 
 export function Home() {
@@ -24,7 +24,7 @@ export function Home() {
                     contentContainerStyle={styles.main}
                 >
                     <View style={[styles.logoCircle]}>
-                        <MaterialIcons name="kitchen" size={96} color={colors.primary500} />
+                        <MaterialIcons name="kitchen" size={96} color={colors.primary} />
                     </View>
 
                     <Text style={[styles.mainTitle]}>
@@ -52,7 +52,7 @@ export function Home() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.neutral900,
+        backgroundColor: colors.darkgreen,
     },
     innerContainer: {
         flex: 1,
@@ -79,20 +79,20 @@ const styles = StyleSheet.create({
         borderRadius: 80,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: colors.neutral800,
+        backgroundColor: colors.mediumgreen,
     },
     mainTitle: {
         marginTop: 32,
         fontSize: 24,
         fontWeight: "bold",
         textAlign: "center",
-        color: colors.neutral50,
+        color: colors.white,
     },
     mainSubtitle: {
         marginTop: 8,
         fontSize: 16,
         textAlign: "center",
-        color: colors.neutral400,
+        color: colors.lightgreen,
     },
     mainButton: {
         marginTop: 32,
@@ -102,11 +102,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: colors.primary500,
+        backgroundColor: colors.primary,
     },
     mainButtonText: {
         fontSize: 16,
         fontWeight: "bold",
-        color: colors.neutral900,
+        color: colors.darkgreen,
     },
 });

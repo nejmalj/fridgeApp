@@ -1,48 +1,50 @@
-import { Button, Text } from '@react-navigation/elements';
-import {SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {MaterialIcons} from "@expo/vector-icons";
+import { Text } from '@react-navigation/elements';
+import { SafeAreaView, StyleSheet, TouchableOpacity, View, Button } from 'react-native';
+import { MaterialIcons } from "@expo/vector-icons";
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { useState } from "react";
 
 const colors = {
     primary: "#38e07b",
     black: "#000000",
-    gray900: "#111827",
     white: "#ffffff",
 };
 
 export function Scan() {
+    const [facing, setFacing] = useState<CameraType>('back');
+    const [permission, requestPermission] = useCameraPermissions();
+
+    if (!permission) {
+        return <View />;
+    }
+
+    if (!permission.granted) {
+        return (
+            <View style={styles.scannerBox}>
+                <Text>We need your permission to show the camera</Text>
+                <Button onPress={requestPermission} title="Autoriser" />
+            </View>
+        );
+    }
+
+    function toggleCameraFacing() {
+        setFacing(current => (current === 'back' ? 'front' : 'back'));
+    }
+
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.overlay} />
+        <View style={styles.container}>
+            <CameraView style={styles.camera} facing={facing} />
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+                </TouchableOpacity>
+            </View>
 
-            <View style={styles.content}>
-                <View style={styles.main}>
-                    <View style={[styles.scannerBox]}>
-                        <MaterialIcons
-                            name="qr-code-scanner"
-                            size={96}
-                            color={colors.white}
-                            style={{ opacity: 0.5 }}
-                        />
-                    </View>
-                    <Text style={styles.instructions}>
-                        Scannez un aliment pour l'ajouter à votre frigo
-                    </Text>
-                </View>
-
-                {/* ACTION BUTTONS */}
-                <View style={styles.actions}>
-                    <TouchableOpacity style={styles.smallActionButton}>
-                        <MaterialIcons name="flash-on" size={24} color={colors.white} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.mainActionButton}>
-                        <MaterialIcons name="photo-camera" size={32} color={colors.black} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.smallActionButton}>
+            <View style={styles.actions}>
+                    <TouchableOpacity style={styles.smallActionButton} onPress={toggleCameraFacing}>
                         <MaterialIcons name="flip-camera-android" size={24} color={colors.white} />
                     </TouchableOpacity>
-                </View>
             </View>
-        </SafeAreaView>
+            </View>
     )
 }
 
@@ -90,11 +92,6 @@ const styles = StyleSheet.create({
         marginBottom: 32,
         borderColor: colors.primary
     },
-    instructions: {
-        color: "rgba(255,255,255,0.8)",
-        fontSize: 16,
-        textAlign: "center",
-    },
     actions: {
         flexDirection: "row",
         justifyContent: "center",
@@ -122,38 +119,28 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.4,
         shadowRadius: 6,
     },
-    footer: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        borderTopWidth: 1,
-        borderTopColor: "rgba(255,255,255,0.1)",
-        backgroundColor: "rgba(0,0,0,0.3)",
-        paddingTop: 12,
-        paddingBottom: 20,
-        paddingHorizontal: 16,
-        zIndex: 1,
+    message: {
+        textAlign: 'center',
+        paddingBottom: 10,
     },
-    footerItem: {
-        alignItems: "center",
+    camera: {
+        flex: 1,
     },
-    footerText: {
-        fontSize: 12,
-        fontWeight: "500",
-        marginTop: 4,
-        letterSpacing: 0.2,
+    buttonContainer: {
+        position: 'absolute',
+        bottom: 64,
+        flexDirection: 'row',
+        backgroundColor: 'transparent',
+        width: '100%',
+        paddingHorizontal: 64,
     },
-    activeScannerIcon: {
-        position: "relative",
-        alignItems: "center",
-        justifyContent: "center",
+    button: {
+        flex: 1,
+        alignItems: 'center',
     },
-    activeScannerGlow: {
-        position: "absolute",
-        top: -16,
-        left: -16,
-        right: -16,
-        bottom: -16,
-        borderRadius: 40,
-        backgroundColor: "rgba(56,224,123,0.2)",
+    text: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white',
     },
 });
